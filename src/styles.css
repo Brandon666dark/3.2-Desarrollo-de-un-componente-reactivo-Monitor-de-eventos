@@ -1,0 +1,8 @@
+*, *::before, *::after { box-sizing: border-box; }
+html, body { margin: 0; }
+body {
+  font-family: "Segoe UI", system-ui, -apple-system, "Helvetica Neue", Arial, sans-serif;
+  background: #e9eef3;
+  color: #14202e;
+  -webkit-font-smoothing: antialiased;
+}

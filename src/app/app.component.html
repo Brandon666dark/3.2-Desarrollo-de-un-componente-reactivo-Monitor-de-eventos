@@ -1,0 +1,72 @@
+@if (vm$ | async; as vm) {
+  <main class="dashboard">
+    <header class="topbar">
+      <div>
+        <h1>ReactiveEventMonitor</h1>
+        <p>Eventos periódicos generados con <code>interval()</code> y observados en tiempo real.</p>
+      </div>
+
+      <div class="status" [class.status--on]="vm.running" role="status" aria-live="polite">
+        <span class="status__dot"></span>
+        {{ vm.running ? 'Monitoreo activo' : 'Monitoreo detenido' }}
+      </div>
+    </header>
+
+    <section class="grid">
+      <article class="card card--counter" [class.card--live]="vm.running">
+        <h2>Contador</h2>
+        <div class="counter" aria-live="off">{{ vm.counter }}</div>
+        <p class="hint">
+          {{ vm.running ? 'Un valor nuevo cada segundo' : vm.counter === 0 ? 'Pulsa Iniciar para comenzar' : 'En pausa, puedes reanudar' }}
+        </p>
+
+        <div class="actions">
+          <button class="btn btn--start" (click)="start()" [disabled]="vm.running">Iniciar</button>
+          <button class="btn btn--stop" (click)="stop()" [disabled]="!vm.running">Detener</button>
+          <button class="btn btn--reset" (click)="reset()" [disabled]="vm.total === 0 && !vm.running">Reiniciar</button>
+        </div>
+      </article>
+
+      <article class="card stat">
+        <h2>Eventos emitidos</h2>
+        <strong>{{ vm.total }}</strong>
+        <span>desde el último reinicio</span>
+      </article>
+
+      <article class="card stat">
+        <h2>Última emisión</h2>
+        <strong class="stat__time">
+          {{ vm.lastEvent ? (vm.lastEvent.time | date: 'HH:mm:ss') : '--:--:--' }}
+        </strong>
+        <span>{{ vm.lastEvent ? 'valor ' + vm.lastEvent.value : 'sin eventos todavía' }}</span>
+      </article>
+
+      <article class="card stat">
+        <h2>Suscripciones activas</h2>
+        <strong>{{ vm.activeSubscriptions }}</strong>
+        <span>{{ vm.running ? 'interval() en ejecución' : 'ningún proceso en segundo plano' }}</span>
+      </article>
+
+      <article class="card card--history">
+        <div class="history__head">
+          <h2>Historial</h2>
+          <span class="badge">últimos {{ vm.events.length }} de 10</span>
+        </div>
+
+        @if (vm.events.length === 0) {
+          <p class="empty">Aún no hay eventos. Inicia el monitoreo para registrarlos aquí.</p>
+        } @else {
+          <ul class="history">
+            @for (e of vm.events; track e.id) {
+              <li class="history__item">
+                <span class="history__id">Evento {{ e.id }}</span>
+                <span class="history__value">valor {{ e.value }}</span>
+                <time>{{ e.time | date: 'HH:mm:ss' }}</time>
+              </li>
+            }
+          </ul>
+        }
+      </article>
+    </section>
+  </main>
+}
